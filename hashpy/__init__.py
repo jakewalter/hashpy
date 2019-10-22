@@ -7,11 +7,12 @@ using Python and HASH
 
 :copyright:
     Mark C. Williams
+    this version forked by Jake Walter to work with updated versions of obspy event files
 
 """
 
-from hashpype import HashPype, HashError
-from doublecouple import DoubleCouple
+from hashpy.hashpype import HashPype
+from hashpy.doublecouple import DoubleCouple
 
 __version__ = "0.5.6"
 

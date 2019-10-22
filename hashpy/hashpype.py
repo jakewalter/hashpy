@@ -129,7 +129,7 @@ class HashPype(object):
     # Chosen fm run setings: (a config file could look like this:)
     # dbhash.conf -----------------------------------------------------
     # Defaults
-    npolmin  = 8    # Enter mininum number of polarities (e.g., 8)
+    npolmin  = 6    # Enter mininum number of polarities (e.g., 8)
     max_agap = 90   # Enter maximum azimuthal gap (e.g., 90)
     max_pgap = 60   # Enter maximum takeoff angle gap (e.g., 60)
     dang     = 5    # Enter grid angle for focal mech search, in degrees 5(min {0})
@@ -310,6 +310,7 @@ class HashPype(object):
             outputter = Outputter(format=format)
         except:
             raise IOError("Can't find a module for the format {0}".format(format))
+        print(self.qdep)
         return outputter(self, *args, **kwargs)
         
     def load_velocity_models(self, model_list=None):
@@ -350,7 +351,10 @@ class HashPype(object):
         self.index[0] = 1
         for nm in range(1,self.nmc):
             val = ran_norm()
-            self.qdep2[nm] = abs(self.qdep + self.sez * val) # randomly perturbed source depth
+            # = abs(self.qdep + self.sez * val)
+            #print self.qdep
+            #print val
+            self.qdep2[nm] = abs(self.qdep + 0 * val) # randomly perturbed source depth
             self.index[nm] = (nm % self.ntab) + 1  # index used to choose velocity model
             
     def calculate_takeoff_angles(self):
@@ -362,8 +366,12 @@ class HashPype(object):
         # find azimuth and takeoff angle for each trial
         for k in range(self.npol):
             for nm in range(self.nmc):
+                #print nm
+                #print self.qazi[k], self.index[nm],self.dist[k],self.qdep2[nm]
                 self.p_azi_mc[k,nm] = self.qazi[k]
                 self.p_the_mc[k,nm], iflag = get_tts(self.index[nm],self.dist[k],self.qdep2[nm])
+        #print self.p_azi_mc[:self.npol,0]
+        #print self.p_the_mc[:self.npol,0]
         self.magap, self.mpgap = get_gap(self.p_azi_mc[:self.npol,0],self.p_the_mc[:self.npol,0],self.npol)
     
     def view_polarity_data(self):
@@ -513,8 +521,4 @@ class HashPype(object):
         self.calculate_hash_focalmech(use_amplitudes=True)
         self.calculate_quality(use_amplitudes=True)
 
-
-class HashError(StandardError):
-    """Throw this if something happens while running"""
-    pass
 
